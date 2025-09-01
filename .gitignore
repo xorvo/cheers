@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Build artifacts
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log
+
+# Temporary files
+temp.*
+tmp/
