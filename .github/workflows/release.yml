@@ -17,6 +17,9 @@ permissions:
 jobs:
   build:
     runs-on: macos-latest
+    outputs:
+      source_sha256: ${{ steps.source_sha.outputs.SHA256 }}
+      version: ${{ steps.version.outputs.VERSION }}
     
     steps:
     - name: Checkout code
@@ -40,6 +43,24 @@ jobs:
       run: |
         VERSION="${{ steps.version.outputs.VERSION }}"
         ./release.sh $VERSION
+    
+    - name: Calculate source tarball SHA256
+      id: source_sha
+      run: |
+        # Wait for GitHub to create the source tarball
+        VERSION="${{ steps.version.outputs.VERSION }}"
+        SOURCE_URL="https://github.com/xorvo/cheers/archive/refs/tags/v${VERSION}.tar.gz"
+        
+        # Try to get the SHA256 of the source tarball
+        if curl -fsSL "$SOURCE_URL" > /dev/null 2>&1; then
+          SHA256=$(curl -fsSL "$SOURCE_URL" | shasum -a 256 | cut -d' ' -f1)
+        else
+          # If tag doesn't exist yet, calculate from local archive
+          git archive --format=tar.gz --prefix=cheers-${VERSION}/ HEAD > source.tar.gz
+          SHA256=$(shasum -a 256 source.tar.gz | cut -d' ' -f1)
+        fi
+        echo "SHA256=$SHA256" >> $GITHUB_OUTPUT
+        echo "Source SHA256: $SHA256"
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -90,3 +111,17 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  update-homebrew-tap:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Trigger Homebrew tap update
+      uses: peter-evans/repository-dispatch@v3
+      with:
+        token: ${{ secrets.TAP_UPDATE_TOKEN }}
+        repository: xorvo/homebrew-tap
+        event-type: update-formula
+        client-payload: '{"formula": "cheers", "version": "${{ needs.build.outputs.version }}", "sha256": "${{ needs.build.outputs.source_sha256 }}"}'
