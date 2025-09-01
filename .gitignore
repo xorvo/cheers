@@ -18,3 +18,5 @@ __pycache__/
 # Temporary files
 temp.*
 tmp/
+
+notifier.tar.gz

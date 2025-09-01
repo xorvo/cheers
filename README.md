@@ -12,8 +12,8 @@ A minimal, elegant replacement for terminal-notifier built with Swift.
 - 🖱️ **Clickable** - Open URLs when notifications are clicked
 - 🖼️ **Image Support** - Display images in notifications
 - 🔊 **Custom Sounds** - Use system sounds or silence
-- 📦 **App Bundle** - Proper macOS app structure
-- 🚀 **Native Swift** - Built with UserNotifications framework
+- 📦 **Single Binary** - Just one executable, no complex app bundles
+- 🚀 **Native Swift** - Built with macOS native frameworks
 - 🪶 **Lightweight** - ~200KB vs terminal-notifier's 2MB
 
 ## Quick Install
@@ -21,34 +21,27 @@ A minimal, elegant replacement for terminal-notifier built with Swift.
 ### Download Pre-built Release
 
 ```bash
-# Download latest release
-curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz -o notifier.tar.gz
-
-# Extract
-tar -xzf notifier.tar.gz
-
-# Install
-./install.sh
+# One-line install
+curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz | tar -xz && ./install.sh
 ```
 
 ### Build from Source
 
 ```bash
-# Clone the repository
+# Clone and install
 git clone https://github.com/xorvo/notifier.git
 cd notifier
-
-# Build
-make build
-
-# Install
 make install
 ```
 
-### Homebrew (Coming Soon)
+### Manual Install
 
 ```bash
-brew install --cask notifier
+# Download and extract
+curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz | tar -xz
+
+# Copy to your bin directory
+cp notifier /usr/local/bin/
 ```
 
 ## Usage
@@ -90,12 +83,11 @@ notifier -t "Background Task" -m "Processing complete" --sound none
 
 ## Permissions
 
-On first run, macOS will ask for notification permissions. The app is ad-hoc signed for easy distribution.
+On first run, macOS will ask for notification permissions.
 
 If you encounter permission issues:
-1. Open System Preferences → Security & Privacy → Notifications
-2. Allow notifications for Notifier or Terminal
-3. Or run the app once directly: `open /Applications/Notifier.app`
+1. Open System Settings → Notifications
+2. Allow notifications for Terminal (or your terminal app)
 
 ## Building from Source
 
@@ -112,14 +104,14 @@ If you encounter permission issues:
 git clone https://github.com/xorvo/notifier.git
 cd notifier
 
-# Build the app
+# Build
 make build
-
-# Create release package
-./release.sh 1.0.0
 
 # Install locally
 make install
+
+# Or create a release package
+./release.sh 1.0.0
 ```
 
 ## Integration Examples

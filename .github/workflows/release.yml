@@ -22,11 +22,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
-    - name: Set up Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
-    
     - name: Get version
       id: version
       run: |
@@ -38,16 +33,9 @@ jobs:
         echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         echo "Building version: $VERSION"
     
-    - name: Build application
-      run: |
-        make clean
-        make build
+    - name: Build CLI
+      run: make build
         
-    - name: Code sign application
-      run: |
-        codesign -s - --force --deep build/Notifier.app
-        codesign -v build/Notifier.app
-    
     - name: Create distribution package
       run: |
         VERSION="${{ steps.version.outputs.VERSION }}"
@@ -69,19 +57,32 @@ jobs:
         body: |
           ## Notifier v${{ steps.version.outputs.VERSION }}
           
+          A simple, lightweight macOS notification CLI tool.
+          
           ### Installation
           
           ```bash
-          # Download and extract
-          curl -L https://github.com/xorvo/notifier/releases/download/v${{ steps.version.outputs.VERSION }}/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz -o notifier.tar.gz
-          tar -xzf notifier.tar.gz
-          
-          # Install
+          # Download and install
+          curl -L https://github.com/xorvo/notifier/releases/download/v${{ steps.version.outputs.VERSION }}/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
           ./install.sh
           ```
           
-          ### What's New
-          - See [CHANGELOG.md](https://github.com/xorvo/notifier/blob/main/CHANGELOG.md) for details
+          Or manually:
+          ```bash
+          # Download, extract, and copy to /usr/local/bin
+          curl -L https://github.com/xorvo/notifier/releases/download/v${{ steps.version.outputs.VERSION }}/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
+          cp notifier /usr/local/bin/
+          ```
+          
+          ### Usage
+          
+          ```bash
+          # Simple notification
+          notifier "Hello World"
+          
+          # With options
+          notifier -t "Title" -m "Message" --sound Glass
+          ```
           
           ### Checksums
           See `checksums.txt` in release assets
