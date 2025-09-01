@@ -88,7 +88,54 @@ cheers -t "Background Task" -m "Processing complete" --sound none
 
 ## Available Sounds
 
-`Basso`, `Blow`, `Bottle`, `Frog`, `Funk`, `Glass`, `Hero`, `Morse`, `Ping`, `Pop`, `Purr`, `Sosumi`, `Submarine`, `Tink`
+### System Sounds
+
+macOS provides these built-in notification sounds:
+
+| Sound | Description |
+|-------|-------------|
+| `Basso` | Deep error sound |
+| `Blow` | Soft blowing sound |
+| `Bottle` | Bottle pop |
+| `Frog` | Frog croak |
+| `Funk` | Funky alert |
+| `Glass` | Glass ping (great for success) |
+| `Hero` | Heroic sound |
+| `Morse` | Morse code beep |
+| `Ping` | Simple ping |
+| `Pop` | Pop sound |
+| `Purr` | Cat purr |
+| `Sosumi` | Classic Mac sound |
+| `Submarine` | Submarine sonar |
+| `Tink` | Light tink |
+
+**Special values:**
+- `default` - Uses system default notification sound
+- `none` - Silent notification (no sound)
+
+### Custom Sounds
+
+You can add your own notification sounds:
+
+1. **User-specific sounds:** Place `.aiff` files in `~/Library/Sounds/`
+2. **System-wide sounds:** Place `.aiff` files in `/Library/Sounds/` (requires admin)
+
+Example:
+```bash
+# Add a custom sound
+cp MySound.aiff ~/Library/Sounds/
+
+# Use it with cheers
+cheers "Custom!" --sound MySound
+```
+
+### Creating Custom Sounds
+
+To create compatible sound files:
+1. Use Audio MIDI Setup.app or any audio editor
+2. Export as AIFF format
+3. Keep them short (1-2 seconds recommended)
+4. Name without spaces for easier command line use
 
 ## Permissions
 
