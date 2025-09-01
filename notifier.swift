@@ -1,10 +1,106 @@
 #!/usr/bin/env swift
 
 import Foundation
+import UserNotifications
 import AppKit
 
-// CLI-only version using NSUserNotification (deprecated but works without bundle)
+// Notification handler for clicks
+class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    var openURL: String?
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, 
+                                didReceive response: UNNotificationResponse, 
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        if let urlString = openURL, let url = URL(string: urlString) {
+            NSWorkspace.shared.open(url)
+        }
+        completionHandler()
+        exit(0)
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, 
+                                willPresent notification: UNNotification, 
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        if #available(macOS 11.0, *) {
+            completionHandler([.banner, .sound, .badge])
+        } else {
+            completionHandler([.sound, .badge])
+        }
+    }
+}
 
+class Notifier {
+    private let center = UNUserNotificationCenter.current()
+    private let delegate = NotificationDelegate()
+    
+    init() {
+        center.delegate = delegate
+    }
+    
+    func requestAuthorization(completion: @escaping (Bool) -> Void) {
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("Error requesting authorization: \(error)")
+            }
+            completion(granted)
+        }
+    }
+    
+    func send(title: String, 
+              message: String, 
+              subtitle: String? = nil,
+              sound: String? = nil,
+              imageURL: String? = nil,
+              openURL: String? = nil) {
+        
+        delegate.openURL = openURL
+        
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = message
+        
+        if let subtitle = subtitle {
+            content.subtitle = subtitle
+        }
+        
+        // Set sound
+        if let soundName = sound, soundName != "none" {
+            if soundName == "default" {
+                content.sound = .default
+            } else {
+                content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(soundName).aiff"))
+            }
+        }
+        
+        // Add image if provided
+        if let imageURLString = imageURL {
+            if let imageURL = URL(string: imageURLString),
+               let attachment = try? UNNotificationAttachment(identifier: "image", url: imageURL, options: nil) {
+                content.attachments = [attachment]
+            } else if FileManager.default.fileExists(atPath: imageURLString) {
+                let imageURL = URL(fileURLWithPath: imageURLString)
+                if let attachment = try? UNNotificationAttachment(identifier: "image", url: imageURL, options: nil) {
+                    content.attachments = [attachment]
+                }
+            }
+        }
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+        
+        center.add(request) { error in
+            if let error = error {
+                print("Error sending notification: \(error)")
+                exit(1)
+            }
+            // Keep alive briefly to handle clicks
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                exit(0)
+            }
+        }
+    }
+}
+
+// Command line argument parser
 struct Arguments {
     var title: String = "Notification"
     var message: String = ""
@@ -65,6 +161,7 @@ struct Arguments {
                     i += 1
                 }
             default:
+                // If no flag, treat as message
                 if message.isEmpty {
                     message = arg
                 }
@@ -106,21 +203,6 @@ func printHelp() {
     """)
 }
 
-class NotificationDelegate: NSObject, NSUserNotificationCenterDelegate {
-    var openURL: String?
-    
-    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
-        if let urlString = openURL, let url = URL(string: urlString) {
-            NSWorkspace.shared.open(url)
-        }
-        exit(0)
-    }
-    
-    func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
-        return true
-    }
-}
-
 // Main execution
 let args = Arguments(from: CommandLine.arguments)
 
@@ -135,56 +217,25 @@ if args.message.isEmpty && !args.help {
     exit(1)
 }
 
-// Create and send notification using NSUserNotification
-let notification = NSUserNotification()
-notification.title = args.title
-notification.informativeText = args.message
+// Create and send notification
+let notifier = Notifier()
 
-if let subtitle = args.subtitle {
-    notification.subtitle = subtitle
-}
-
-// Set sound
-if let soundName = args.sound, soundName != "none" {
-    if soundName == "default" {
-        notification.soundName = NSUserNotificationDefaultSoundName
+notifier.requestAuthorization { granted in
+    if granted {
+        notifier.send(
+            title: args.title,
+            message: args.message,
+            subtitle: args.subtitle,
+            sound: args.sound,
+            imageURL: args.imageURL,
+            openURL: args.openURL
+        )
+        RunLoop.main.run()
     } else {
-        // macOS system sounds don't have .aiff extension when using NSUserNotification
-        notification.soundName = soundName
+        print("Notification permission denied")
+        print("Please enable notifications in System Settings > Notifications")
+        exit(1)
     }
-}
-
-// Handle image
-if let imageURLString = args.imageURL {
-    if let imageURL = URL(string: imageURLString) {
-        // Try as URL
-        if let image = NSImage(contentsOf: imageURL) {
-            notification.contentImage = image
-        }
-    } else if FileManager.default.fileExists(atPath: imageURLString) {
-        // Try as file path
-        if let image = NSImage(contentsOfFile: imageURLString) {
-            notification.contentImage = image
-        }
-    }
-}
-
-// Store URL for click handling
-if let openURL = args.openURL {
-    notification.userInfo = ["openURL": openURL]
-}
-
-// Set up delegate for handling clicks
-let delegate = NotificationDelegate()
-delegate.openURL = args.openURL
-NSUserNotificationCenter.default.delegate = delegate
-
-// Deliver notification
-NSUserNotificationCenter.default.deliver(notification)
-
-// Keep alive briefly to handle clicks
-DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-    exit(0)
 }
 
 RunLoop.main.run()
