@@ -15,7 +15,10 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
             NSWorkspace.shared.open(url)
         }
         completionHandler()
-        exit(0)
+        // Exit immediately after handling the click
+        DispatchQueue.main.async {
+            exit(0)
+        }
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, 
@@ -92,8 +95,9 @@ class Notifier {
                 print("Error sending notification: \(error)")
                 exit(1)
             }
-            // Keep alive briefly to handle clicks
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // Keep alive longer if there's a URL to handle clicks
+            let delay = openURL != nil ? 30.0 : 0.5
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 exit(0)
             }
         }
