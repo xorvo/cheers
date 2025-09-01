@@ -19,6 +19,13 @@ A minimal, elegant notification tool for macOS built with Swift.
 
 ## Quick Install
 
+### Homebrew (Recommended)
+
+```bash
+brew tap xorvo/tap
+brew install cheers
+```
+
 ### Download Pre-built Release
 
 ```bash

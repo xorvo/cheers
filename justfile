@@ -98,6 +98,42 @@ quick-test:
 current-version:
     @grep "CFBundleShortVersionString" Makefile | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' || echo "1.0.0"
 
+# Generate icns file from iconset
+generate-icon:
+    @echo "🎨 Generating Cheers.icns from Cheers.iconset..."
+    @if [ -d "Cheers.iconset" ]; then \
+        iconutil -c icns Cheers.iconset; \
+        echo "✅ Generated Cheers.icns successfully"; \
+        ls -lh Cheers.icns | awk '{print "   Size: " $$5}'; \
+    else \
+        echo "❌ Cheers.iconset directory not found"; \
+        exit 1; \
+    fi
+
+# Validate iconset before generating
+validate-iconset:
+    @echo "🔍 Validating Cheers.iconset..."
+    @if [ -d "Cheers.iconset" ]; then \
+        echo "Required icon sizes:"; \
+        for size in 16 32 128 256 512; do \
+            file1="Cheers.iconset/icon_$${size}x$${size}.png"; \
+            file2="Cheers.iconset/icon_$${size}x$${size}@2x.png"; \
+            if [ -f "$$file1" ]; then \
+                echo "  ✅ icon_$${size}x$${size}.png"; \
+            else \
+                echo "  ❌ icon_$${size}x$${size}.png (missing)"; \
+            fi; \
+            if [ -f "$$file2" ] && [ "$$size" != "512" ]; then \
+                echo "  ✅ icon_$${size}x$${size}@2x.png"; \
+            elif [ "$$size" != "512" ]; then \
+                echo "  ❌ icon_$${size}x$${size}@2x.png (missing)"; \
+            fi; \
+        done; \
+    else \
+        echo "❌ Cheers.iconset directory not found"; \
+        exit 1; \
+    fi
+
 # Lint Swift code
 lint:
     @if command -v swiftlint &> /dev/null; then \
