@@ -2,6 +2,10 @@
 
 A minimal, elegant replacement for terminal-notifier built with Swift.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-macOS-blue.svg)]()
+[![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)]()
+
 ## Features
 
 - 🎯 **Simple & Minimal** - No bloat, just notifications
@@ -10,28 +14,41 @@ A minimal, elegant replacement for terminal-notifier built with Swift.
 - 🔊 **Custom Sounds** - Use system sounds or silence
 - 📦 **App Bundle** - Proper macOS app structure
 - 🚀 **Native Swift** - Built with UserNotifications framework
+- 🪶 **Lightweight** - ~200KB vs terminal-notifier's 2MB
 
-## Build
+## Quick Install
+
+### Download Pre-built Release
 
 ```bash
-make build
+# Download latest release
+curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz -o notifier.tar.gz
+
+# Extract
+tar -xzf notifier.tar.gz
+
+# Install
+./install.sh
 ```
 
-This creates:
-- `build/Notifier.app` - The app bundle
-- `build/notifier` - Command-line tool symlink
-
-## Installation
+### Build from Source
 
 ```bash
-# Option 1: Install to /usr/local/bin (requires sudo)
+# Clone the repository
+git clone https://github.com/xorvo/notifier.git
+cd notifier
+
+# Build
+make build
+
+# Install
 make install
+```
 
-# Option 2: Use directly from build directory
-./build/notifier [options]
+### Homebrew (Coming Soon)
 
-# Option 3: Add to PATH
-export PATH="$PATH:$(pwd)/build"
+```bash
+brew install --cask notifier
 ```
 
 ## Usage
@@ -57,32 +74,78 @@ notifier -t "Background Task" -m "Processing complete" --sound none
 
 ## Options
 
-- `-t, --title TEXT` - Notification title
-- `-m, --message TEXT` - Notification message  
-- `-s, --subtitle TEXT` - Notification subtitle
-- `--sound NAME` - Sound name (Glass, Ping, etc.) or 'none'
-- `-i, --image PATH` - Path or URL to image
-- `-o, --open URL` - URL to open when clicked
-- `-h, --help` - Show help
+| Option | Description |
+|--------|-------------|
+| `-t, --title TEXT` | Notification title |
+| `-m, --message TEXT` | Notification message |
+| `-s, --subtitle TEXT` | Notification subtitle |
+| `--sound NAME` | Sound name (Glass, Ping, etc.) or 'none' |
+| `-i, --image PATH` | Path or URL to image |
+| `-o, --open URL` | URL to open when clicked |
+| `-h, --help` | Show help |
+
+## Available Sounds
+
+`Basso`, `Blow`, `Bottle`, `Frog`, `Funk`, `Glass`, `Hero`, `Morse`, `Ping`, `Pop`, `Purr`, `Sosumi`, `Submarine`, `Tink`
 
 ## Permissions
 
-On first run, macOS will ask for notification permissions. You need to:
+On first run, macOS will ask for notification permissions. The app is ad-hoc signed for easy distribution.
 
-1. **Option A**: Sign the app with a developer certificate
-2. **Option B**: Allow notifications for Terminal/your IDE in System Preferences
-3. **Option C**: Run the app bundle directly once to grant permissions:
-   ```bash
-   open build/Notifier.app
-   ```
+If you encounter permission issues:
+1. Open System Preferences → Security & Privacy → Notifications
+2. Allow notifications for Notifier or Terminal
+3. Or run the app once directly: `open /Applications/Notifier.app`
 
-## Architecture
+## Building from Source
 
-Built with:
-- Swift 5+ 
-- UserNotifications framework
-- AppKit for URL opening
-- Minimal dependencies
+### Requirements
+
+- macOS 10.14+
+- Xcode Command Line Tools
+- Swift 5.0+
+
+### Build Steps
+
+```bash
+# Clone repository
+git clone https://github.com/xorvo/notifier.git
+cd notifier
+
+# Build the app
+make build
+
+# Create release package
+./release.sh 1.0.0
+
+# Install locally
+make install
+```
+
+## Integration Examples
+
+### Shell Script
+```bash
+#!/bin/bash
+notifier -t "Backup Complete" -m "All files backed up successfully" --sound Glass
+```
+
+### Ruby
+```ruby
+system('notifier', '-t', 'Deploy', '-m', 'Application deployed to production')
+```
+
+### Python
+```python
+import subprocess
+subprocess.run(['notifier', '-t', 'Alert', '-m', 'Process completed'])
+```
+
+### Node.js
+```javascript
+const { exec } = require('child_process');
+exec('notifier -t "Build" -m "Build successful"');
+```
 
 ## Differences from terminal-notifier
 
@@ -93,19 +156,21 @@ Built with:
 | Size | ~2MB | ~200KB |
 | Dependencies | Many | None |
 | Code style | Complex | Minimal |
+| Icon support | Limited | Full |
 
-## Integration with Webhook Server
+## Contributing
 
-The parent directory contains a webhook server that can use this notifier:
-
-```ruby
-# In webhook_server.rb, replace terminal-notifier with:
-system('./notifier/build/notifier', 
-       '-t', title,
-       '-m', message,
-       '-o', url)
-```
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-MIT - Simple, modern, and free to use.
+MIT - See [LICENSE](LICENSE) file for details.
+
+## Author
+
+Created by [@xorvo](https://github.com/xorvo)
+
+## Acknowledgments
+
+- Inspired by [terminal-notifier](https://github.com/julienXX/terminal-notifier)
+- Built with Swift and Apple's UserNotifications framework

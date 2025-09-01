@@ -5,6 +5,7 @@
 
 # Build artifacts
 build/
+dist/
 
 # Python
 __pycache__/
