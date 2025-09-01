@@ -44,7 +44,7 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: notifier-${{ steps.version.outputs.VERSION }}
+        name: cheers-${{ steps.version.outputs.VERSION }}
         path: dist/
     
     - name: Create Release
@@ -52,36 +52,36 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          dist/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz
+          dist/cheers-${{ steps.version.outputs.VERSION }}-macos.tar.gz
           dist/checksums.txt
         body: |
-          ## Notifier v${{ steps.version.outputs.VERSION }}
+          ## Cheers v${{ steps.version.outputs.VERSION }} 🥂
           
-          A simple, lightweight macOS notification CLI tool.
+          A delightful macOS notification CLI tool.
           
           ### Installation
           
           ```bash
           # Download and install
-          curl -L https://github.com/xorvo/notifier/releases/download/v${{ steps.version.outputs.VERSION }}/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
+          curl -L https://github.com/xorvo/cheers/releases/download/v${{ steps.version.outputs.VERSION }}/cheers-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
           ./install.sh
           ```
           
           Or manually:
           ```bash
-          # Download, extract, and copy to /usr/local/bin
-          curl -L https://github.com/xorvo/notifier/releases/download/v${{ steps.version.outputs.VERSION }}/notifier-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
-          cp notifier /usr/local/bin/
+          # Download, extract, and install
+          curl -L https://github.com/xorvo/cheers/releases/download/v${{ steps.version.outputs.VERSION }}/cheers-${{ steps.version.outputs.VERSION }}-macos.tar.gz | tar -xz
+          cp -R cheers.app ~/.local/opt/ && ln -s ~/.local/opt/cheers.app/Contents/MacOS/cheers ~/.local/bin/cheers
           ```
           
           ### Usage
           
           ```bash
           # Simple notification
-          notifier "Hello World"
+          cheers "Hello World"
           
           # With options
-          notifier -t "Title" -m "Message" --sound Glass
+          cheers -t "Success" -m "Build complete!" --sound Glass
           ```
           
           ### Checksums

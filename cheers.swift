@@ -173,10 +173,10 @@ struct Arguments {
 
 func printHelp() {
     print("""
-    notifier - A modern, minimal macOS notification tool
+    cheers - A delightful macOS notification tool 🥂
     
     Usage:
-      notifier [options] [message]
+      cheers [options] [message]
     
     Options:
       -t, --title TEXT      Notification title
@@ -189,17 +189,17 @@ func printHelp() {
     
     Examples:
       # Simple notification
-      notifier "Hello World"
+      cheers "Hello World"
       
       # With title and message
-      notifier -t "Alert" -m "Something happened"
+      cheers -t "Alert" -m "Something happened"
       
       # With all options
-      notifier -t "Success" -m "Build complete" -s "CI/CD" --sound Glass \\
-               -i /path/to/icon.png -o http://example.com
+      cheers -t "Success" -m "Build complete" -s "CI/CD" --sound Glass \\
+             -i /path/to/icon.png -o http://example.com
       
       # Silent notification
-      notifier -t "Info" -m "Background task done" --sound none
+      cheers -t "Info" -m "Background task done" --sound none
     """)
 }
 

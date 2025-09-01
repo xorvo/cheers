@@ -1,6 +1,6 @@
-# Notifier - Modern macOS Notification Tool
+# Cheers 🥂 - A Delightful macOS Notification Tool
 
-A minimal, elegant replacement for terminal-notifier built with Swift.
+A minimal, elegant notification tool for macOS built with Swift.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform](https://img.shields.io/badge/platform-macOS-blue.svg)]()
@@ -14,7 +14,8 @@ A minimal, elegant replacement for terminal-notifier built with Swift.
 - 🔊 **Custom Sounds** - Use system sounds or silence
 - 📦 **Single Binary** - Just one executable, no complex app bundles
 - 🚀 **Native Swift** - Built with macOS native frameworks
-- 🪶 **Lightweight** - ~200KB vs terminal-notifier's 2MB
+- 🪶 **Lightweight** - Small and efficient
+- 🥂 **Delightful** - Beautiful cocktail icon
 
 ## Quick Install
 
@@ -22,15 +23,15 @@ A minimal, elegant replacement for terminal-notifier built with Swift.
 
 ```bash
 # One-line install
-curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz | tar -xz && ./install.sh
+curl -L https://github.com/xorvo/cheers/releases/latest/download/cheers-macos.tar.gz | tar -xz && ./install.sh
 ```
 
 ### Build from Source
 
 ```bash
 # Clone and install
-git clone https://github.com/xorvo/notifier.git
-cd notifier
+git clone https://github.com/xorvo/cheers.git
+cd cheers
 make install
 ```
 
@@ -38,31 +39,32 @@ make install
 
 ```bash
 # Download and extract
-curl -L https://github.com/xorvo/notifier/releases/latest/download/notifier-macos.tar.gz | tar -xz
+curl -L https://github.com/xorvo/cheers/releases/latest/download/cheers-macos.tar.gz | tar -xz
 
-# Copy to your bin directory
-cp notifier /usr/local/bin/
+# Install the app bundle
+cp -R cheers.app ~/.local/opt/
+ln -s ~/.local/opt/cheers.app/Contents/MacOS/cheers ~/.local/bin/cheers
 ```
 
 ## Usage
 
 ```bash
 # Simple notification
-notifier "Hello World"
+cheers "Hello World"
 
 # With title and message
-notifier -t "Alert" -m "Something happened"
+cheers -t "Alert" -m "Something happened"
 
 # Full example with all options
-notifier -t "Success" \
-         -m "Build complete" \
-         -s "CI/CD Pipeline" \
-         --sound Glass \
-         -i /path/to/icon.png \
-         -o http://example.com
+cheers -t "Success" \
+      -m "Build complete" \
+      -s "CI/CD Pipeline" \
+      --sound Glass \
+      -i /path/to/icon.png \
+      -o http://example.com
 
 # Silent notification
-notifier -t "Background Task" -m "Processing complete" --sound none
+cheers -t "Background Task" -m "Processing complete" --sound none
 ```
 
 ## Options
@@ -101,8 +103,8 @@ If you encounter permission issues:
 
 ```bash
 # Clone repository
-git clone https://github.com/xorvo/notifier.git
-cd notifier
+git clone https://github.com/xorvo/cheers.git
+cd cheers
 
 # Build
 make build
@@ -119,36 +121,33 @@ make install
 ### Shell Script
 ```bash
 #!/bin/bash
-notifier -t "Backup Complete" -m "All files backed up successfully" --sound Glass
+cheers -t "Backup Complete" -m "All files backed up successfully" --sound Glass
 ```
 
 ### Ruby
 ```ruby
-system('notifier', '-t', 'Deploy', '-m', 'Application deployed to production')
+system('cheers', '-t', 'Deploy', '-m', 'Application deployed to production')
 ```
 
 ### Python
 ```python
 import subprocess
-subprocess.run(['notifier', '-t', 'Alert', '-m', 'Process completed'])
+subprocess.run(['cheers', '-t', 'Alert', '-m', 'Process completed'])
 ```
 
 ### Node.js
 ```javascript
 const { exec } = require('child_process');
-exec('notifier -t "Build" -m "Build successful"');
+exec('cheers -t "Build" -m "Build successful"');
 ```
 
-## Differences from terminal-notifier
+## Why Cheers?
 
-| Feature | terminal-notifier | notifier |
-|---------|------------------|----------|
-| Language | Objective-C | Swift |
-| Last update | 2020 | 2024 |
-| Size | ~2MB | ~200KB |
-| Dependencies | Many | None |
-| Code style | Complex | Minimal |
-| Icon support | Limited | Full |
+- **🥂 Delightful** - Beautiful cocktail icon that makes notifications feel celebratory
+- **⚡ Fast** - Lightweight and efficient
+- **🎯 Simple** - Clean, minimal API
+- **🍎 Native** - Built with Swift for modern macOS
+- **🔧 Reliable** - Proper app bundle structure ensures notifications always work
 
 ## Contributing
 

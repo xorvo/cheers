@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# Release script for Notifier CLI with app bundle
+# Release script for Cheers CLI with app bundle
 
 VERSION=${1:-"1.0.0"}
 DIST_DIR="dist"
-APPNAME="notifier"
-ARCHIVE_NAME="notifier-${VERSION}-macos.tar.gz"
+APPNAME="cheers"
+ARCHIVE_NAME="cheers-${VERSION}-macos.tar.gz"
 
-echo "🚀 Building Notifier v${VERSION} for distribution"
+echo "🥂 Building Cheers v${VERSION} for distribution"
 echo "================================================"
 
 # Clean and build
@@ -31,7 +31,7 @@ echo "📝 Creating install script..."
 cat > $DIST_DIR/install.sh << 'EOF'
 #!/bin/bash
 
-echo "📦 Installing Notifier..."
+echo "📦 Installing Cheers..."
 
 # Check if running on macOS
 if [[ "$OSTYPE" != "darwin"* ]]; then
@@ -58,26 +58,26 @@ fi
 # Install app bundle
 echo "📦 Installing app bundle to $APP_INSTALL_DIR..."
 mkdir -p "$APP_INSTALL_DIR"
-rm -rf "$APP_INSTALL_DIR/notifier.app"
-cp -R notifier.app "$APP_INSTALL_DIR/"
+rm -rf "$APP_INSTALL_DIR/cheers.app"
+cp -R cheers.app "$APP_INSTALL_DIR/"
 
 # Create symlink
 echo "🔗 Creating symlink in $BIN_DIR..."
-rm -f "$BIN_DIR/notifier"
-ln -sf "$APP_INSTALL_DIR/notifier.app/Contents/MacOS/notifier" "$BIN_DIR/notifier"
+rm -f "$BIN_DIR/cheers"
+ln -sf "$APP_INSTALL_DIR/cheers.app/Contents/MacOS/cheers" "$BIN_DIR/cheers"
 
 # Test installation
 echo "🧪 Testing installation..."
-if command -v notifier &> /dev/null; then
+if command -v cheers &> /dev/null; then
     echo "✅ Installation successful!"
     echo ""
     echo "⚠️  IMPORTANT: On first run, macOS will ask for notification permissions."
-    echo "   Go to System Settings > Notifications to grant permission to 'notifier'"
+    echo "   Go to System Settings > Notifications to grant permission to 'cheers'"
     echo ""
-    echo "Usage: notifier 'Hello World'"
-    echo "Help:  notifier --help"
+    echo "Usage: cheers 'Hello World'"
+    echo "Help:  cheers --help"
 else
-    echo "⚠️  notifier not in PATH. Add $BIN_DIR to your PATH:"
+    echo "⚠️  cheers not in PATH. Add $BIN_DIR to your PATH:"
     echo "   export PATH=\"$BIN_DIR:\$PATH\""
 fi
 EOF
@@ -87,7 +87,7 @@ chmod +x $DIST_DIR/install.sh
 # Create tarball
 echo "📦 Creating tarball..."
 cd $DIST_DIR
-tar -czf $ARCHIVE_NAME notifier.app install.sh README.md
+tar -czf $ARCHIVE_NAME cheers.app install.sh README.md
 cd ..
 
 # Generate checksums
