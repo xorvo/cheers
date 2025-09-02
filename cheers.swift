@@ -53,7 +53,6 @@ class Notifier {
               message: String, 
               subtitle: String? = nil,
               sound: String? = nil,
-              imageURL: String? = nil,
               openURL: String? = nil) {
         
         delegate.openURL = openURL
@@ -72,19 +71,6 @@ class Notifier {
                 content.sound = .default
             } else {
                 content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "\(soundName).aiff"))
-            }
-        }
-        
-        // Add image if provided
-        if let imageURLString = imageURL {
-            if let imageURL = URL(string: imageURLString),
-               let attachment = try? UNNotificationAttachment(identifier: "image", url: imageURL, options: nil) {
-                content.attachments = [attachment]
-            } else if FileManager.default.fileExists(atPath: imageURLString) {
-                let imageURL = URL(fileURLWithPath: imageURLString)
-                if let attachment = try? UNNotificationAttachment(identifier: "image", url: imageURL, options: nil) {
-                    content.attachments = [attachment]
-                }
             }
         }
         
@@ -110,7 +96,6 @@ struct Arguments {
     var message: String = ""
     var subtitle: String?
     var sound: String?
-    var imageURL: String?
     var openURL: String?
     var help: Bool = false
     
@@ -150,13 +135,6 @@ struct Arguments {
                 } else {
                     i += 1
                 }
-            case "-i", "--image":
-                if i + 1 < args.count {
-                    imageURL = args[i + 1]
-                    i += 2
-                } else {
-                    i += 1
-                }
             case "-o", "--open":
                 if i + 1 < args.count {
                     openURL = args[i + 1]
@@ -187,7 +165,6 @@ func printHelp() {
       -m, --message TEXT    Notification message
       -s, --subtitle TEXT   Notification subtitle
       --sound NAME          Sound name (default, Glass, Ping, etc.) or 'none'
-      -i, --image PATH      Path or URL to image
       -o, --open URL        URL to open when clicked
       -h, --help           Show this help
     
@@ -200,7 +177,7 @@ func printHelp() {
       
       # With all options
       cheers -t "Success" -m "Build complete" -s "CI/CD" --sound Glass \\
-             -i /path/to/icon.png -o http://example.com
+             -o http://example.com
       
       # Silent notification
       cheers -t "Info" -m "Background task done" --sound none
@@ -231,7 +208,6 @@ notifier.requestAuthorization { granted in
             message: args.message,
             subtitle: args.subtitle,
             sound: args.sound,
-            imageURL: args.imageURL,
             openURL: args.openURL
         )
         RunLoop.main.run()

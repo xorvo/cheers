@@ -10,7 +10,6 @@ A minimal, elegant notification tool for macOS built with Swift.
 
 - 🎯 **Simple & Minimal** - No bloat, just notifications
 - 🖱️ **Clickable** - Open URLs when notifications are clicked
-- 🖼️ **Image Support** - Display images in notifications
 - 🔊 **Custom Sounds** - Use system sounds or silence
 - 📦 **Single Binary** - Just one executable, no complex app bundles
 - 🚀 **Native Swift** - Built with macOS native frameworks
@@ -67,7 +66,6 @@ cheers -t "Success" \
       -m "Build complete" \
       -s "CI/CD Pipeline" \
       --sound Glass \
-      -i /path/to/icon.png \
       -o http://example.com
 
 # Silent notification
@@ -82,7 +80,6 @@ cheers -t "Background Task" -m "Processing complete" --sound none
 | `-m, --message TEXT` | Notification message |
 | `-s, --subtitle TEXT` | Notification subtitle |
 | `--sound NAME` | Sound name (Glass, Ping, etc.) or 'none' |
-| `-i, --image PATH` | Path or URL to image |
 | `-o, --open URL` | URL to open when clicked |
 | `-h, --help` | Show help |
 
